@@ -28,6 +28,7 @@ RUN add-apt-repository "deb http://packages.sury.org/php buster main" -y
 RUN apt update
 RUN apt upgrade -y
 ## Installing all we need
+RUN apt install gettext-base -y
 RUN apt install nginx -y
 RUN apt install mariadb-server -y
 RUN apt install php7.4-fpm php7.4-common php7.4-mysql php7.4-curl \
@@ -79,6 +80,11 @@ COPY srcs/nginx/ft_server.conf /etc/nginx/conf.d
 RUN rm -f /etc/nginx/conf.d/default.conf
 RUN chmod -R 600 /etc/nginx/conf.d/ft_server.conf
 
+# Setting ENV VARIABLE
+ENV NGINX_AUTOINDEX on
+
+# Replacing ENV Variable
+RUN envsubst '${NGINX_AUTOINDEX}' < /etc/nginx/conf.d/ft_server.conf | tee /etc/nginx/conf.d/ft_server.conf
 # Setting up php-fpm
 ## Fixing the installation
 RUN mkdir -p /var/run/php
